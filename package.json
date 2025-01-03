@@ -1,24 +1,26 @@
 {
-  "name": "sellay",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "start": "nodemon ./bin/www"
-  },
-  "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "mongodb": "^6.12.0",
-    "mongodb-express": "^1.0.1",
-    "morgan": "~1.9.1",
-    "pug": "2.0.0-beta11"
-  },
-  "devDependencies": {
-    "@types/node": "^22.10.5",
-    "connect-livereload": "^0.6.1",
-    "livereload": "^0.9.3",
-    "nodemon": "^3.1.9"
-  }
+    "name": "sellay",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "start": "nodemon ./bin/www"
+    },
+    "dependencies": {
+        "body-parser": "^1.20.3",
+        "cookie-parser": "~1.4.4",
+        "debug": "~2.6.9",
+        "express": "~4.16.1",
+        "http-errors": "~1.6.3",
+        "mongodb": "^6.12.0",
+        "mongodb-express": "^1.0.1",
+        "morgan": "~1.9.1",
+        "multer": "^1.4.5-lts.1",
+        "pug": "2.0.0-beta11"
+    },
+    "devDependencies": {
+        "@types/node": "^22.10.5",
+        "connect-livereload": "^0.6.1",
+        "livereload": "^0.9.3",
+        "nodemon": "^3.1.9"
+    }
 }
