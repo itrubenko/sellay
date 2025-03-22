@@ -1,0 +1,8 @@
+<% layout("./layout") %>
+<form action="#" method="post" id="profile">
+    <input type="text" name="name" placeholder="Enter your name" required>
+    <input type="text" name="surname" placeholder="Enter your surname" required>
+    <button>Submit</button>
+</form>
+
+<%~ include("./partial") %>

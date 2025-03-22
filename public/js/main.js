@@ -8,7 +8,7 @@
             body: formData
         });
 
-        var result = request.json();
+        var result = await request.json();
         console.log(result);
     });
 

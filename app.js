@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser')
 var multer = require('multer');
+const { Eta } = require("eta");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -16,8 +17,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(multer().any());
 // view engine setup
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'pug');
+
+// Setup eta
+const eta = new Eta({ views: path.join(__dirname, "views") });
+app.engine("eta", buildEtaEngine());
+app.set("view engine", "eta");
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -44,4 +51,15 @@ app.use(function(err, req, res, next) {
     res.render('error');
 });
 
+function buildEtaEngine() {
+    return (path, opts, callback) => {
+        try {
+            const fileContent = eta.readFile(path);
+            const renderedTemplate = eta.renderString(fileContent, opts);
+            callback(null, renderedTemplate);
+        } catch (error) {
+            callback(error);
+        }
+    };
+}
 module.exports = app;
