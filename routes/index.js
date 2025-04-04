@@ -1,16 +1,23 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const route = express.Router();
 const { MongoClient } = require("mongodb");
 const uri = "mongodb://admin:password@localhost:27017";
 const client = new MongoClient(uri);
+const path = require('path');
+const dotenv = require('dotenv');
+dotenv.config();
+const multer  = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+const { PutObjectCommand, S3Client }  = require('@aws-sdk/client-s3');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+route.get('/', function(req, res, next) {
     res.render('index',{ title: 'Express 1' });
 });
 
 /* GET home page. */
-router.get('/profile', function(req, res) {
+route.get('/profile', function(req, res) {
     const eventName = "serverOpening";
     client.on(eventName, event => {
         console.log(`received ${eventName}: ${JSON.stringify(event, null, 2)}`);
@@ -32,7 +39,7 @@ router.get('/profile', function(req, res) {
     run().catch(console.dir);
 });
 
-router.post('/update', function(req, res) {
+route.post('/update', function(req, res) {
     async function run() {
         try {
             await client.connect();
@@ -50,4 +57,39 @@ router.post('/update', function(req, res) {
     run().catch(console.dir);
 });
 
-module.exports = router;
+const bucketName = process.env.S3_BUCKET_NAME;
+const region = process.env.AWS_BUCKET_REGION;
+const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+
+route.post("/files", upload.array('files', 12), async (req, res) => {
+    var files = req.files;
+    const client = new S3Client({
+        region,
+        credentials: {
+            accessKeyId: AWS_ACCESS_KEY,
+            secretAccessKey: AWS_SECRET_ACCESS_KEY
+          }
+    });
+
+    let result;
+    for (let file of files) {
+        const params = {
+            Bucket: bucketName,
+            Body: file.buffer,
+            Key: file.originalname,
+            ContentType: file.mimetype
+        };
+        console.log(params);
+        const command = new PutObjectCommand(params);
+        result = await client.send(command);
+    }
+
+    if (res.status(200)) {
+        return res.json(result);
+    }
+    return res.json({});
+});
+
+
+module.exports = route;

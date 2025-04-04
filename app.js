@@ -1,29 +1,32 @@
+
 var createError = require('http-errors');
 var express = require('express');
+var cors = require("cors");
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser')
-var multer = require('multer');
+const { Eta } = require("eta");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var app = express();
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: true }));
 
-// parse application/json
-app.use(bodyParser.json());
-app.use(multer().any());
-// view engine setup
+const eta = new Eta({ views: path.join(__dirname, "views") });
+app.engine("eta", buildEtaEngine());
+app.set("view engine", "eta");
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
 
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false}));
+app.use(bodyParser.text({type: '/'}));
+app.use('/uploads', express.static('uploads'));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -34,7 +37,7 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -44,4 +47,15 @@ app.use(function(err, req, res, next) {
     res.render('error');
 });
 
+function buildEtaEngine() {
+    return (path, opts, callback) => {
+        try {
+            const fileContent = eta.readFile(path);
+            const renderedTemplate = eta.renderString(fileContent, opts);
+            callback(null, renderedTemplate);
+        } catch (error) {
+            callback(error);
+        }
+    };
+}
 module.exports = app;
