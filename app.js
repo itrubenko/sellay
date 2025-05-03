@@ -12,6 +12,9 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var app = express();
 
+const dotenv = require('dotenv');
+dotenv.config();
+
 const eta = new Eta({ views: path.join(__dirname, "views") });
 app.engine("eta", buildEtaEngine());
 app.set("view engine", "eta");

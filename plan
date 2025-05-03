@@ -1,0 +1,5 @@
+1. Create template and endpoint with buttons
+2. Save cred into DB
+3.Have customer ID from DB create JWT
+4.Set JWT cookie in browser
+5.Validate JWT for all protected routes.

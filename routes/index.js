@@ -1,11 +1,5 @@
 const express = require('express');
 const route = express.Router();
-const { MongoClient } = require("mongodb");
-const uri = "mongodb://admin:password@localhost:27017";
-const client = new MongoClient(uri);
-const path = require('path');
-const dotenv = require('dotenv');
-dotenv.config();
 const multer  = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -14,29 +8,6 @@ const { PutObjectCommand, S3Client }  = require('@aws-sdk/client-s3');
 /* GET home page. */
 route.get('/', function(req, res, next) {
     res.render('index',{ title: 'Express 1' });
-});
-
-/* GET home page. */
-route.get('/profile', function(req, res) {
-    const eventName = "serverOpening";
-    client.on(eventName, event => {
-        console.log(`received ${eventName}: ${JSON.stringify(event, null, 2)}`);
-    });
-
-    async function run() {
-        try {
-            await client.connect();
-
-            let db = client.db("user-account");
-            let collection = await db.collection("users").findOne();
-            await client.close();
-            res.send(collection);
-        } finally {
-            // Ensures that the client will close when you finish/error
-            await client.close();
-        }
-    }
-    run().catch(console.dir);
 });
 
 route.post('/update', function(req, res) {
