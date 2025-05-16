@@ -3,6 +3,8 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const debug = require('debug')('sellay:server');
 const User = require('../db/User');
+const { authSource } = require('../scripts/middlewares/jwtMiddleware');
+const { createToken } = require('../scripts/jwtHelpers');
 
 const connect = async () => {
     mongoose.connect('mongodb://root:example@localhost:27017/sellay?authSource=admin')
@@ -12,69 +14,86 @@ const connect = async () => {
 
 connect();
 
-function authSource(req, res, next) {
-    const jwt = require('jsonwebtoken');
-    let jwtCookie = req.cookies.jwt;
-    debug("jwtCookie:" + jwtCookie);
-    jwt.verify(jwtCookie, 'secret_jwt', function(err, decoded) {
-        if (!decoded) {
-            return res.redirect('/users');
-        }
-        next();
-    });
-}
-router.get('/', function(req, res) {
-
+router.get('/', function (req, res) {
     res.render('profile');
 });
 
-// /* GET home page. */
-router.get('/profile', authSource, function(req, res) {
+router.get('/profile', authSource, function (req, res) {
     res.render('profileLoggedIn');
 });
 
+function handleErrors(err) {
+    let errors = {
+        formErrors: {},
+        globalErrorMessage: ''
+    };
 
-// /* GET home page. */
-router.get('/profile2', function(req, res) {
-    res.render('profileLoggedIn');
-});
+    if (err.name === 'ValidationError') {
+        Object.values(err.errors).forEach(function(field) {
+            errors.formErrors[field.path] = field.message ;
+        });
+    }
 
+    if (err.code === 11000) {
+        // Duplicate key error (unique fields like email)
+        // errors = [`Duplicate field: ${Object.keys(err.keyValue)[0]}`]
+        // errors['email'] = 'Already exists';
+        errors.globalErrorMessage = 'Already exists';
+    }
 
-function createToken(id) {
-    const jwt = require('jsonwebtoken');
-    return jwt.sign({id}, 'secret_jwt', { expiresIn: 10 }); //sec
+    if (err.name === 'Error') {
+        if (err.message.includes('incorrect password') || err.message.includes('incorrect email')) {
+            errors.globalErrorMessage = 'Invalid login or password. Remember that password is case-sensitive. Please try again.';
+        }
+    }
+    return errors;
 }
 
-
 router.post('/register',
-    function (req, res, next) {
-
-        next();
-    },
     async function (req, res, next) {
-        let { email , password } = req.body;
+        let registerResult = {
+            success: true,
+            formErrors: {},
+            errorMessage: ''
+        };
+        let { password, confirmpassword, email, confirmemail } = req.body;
 
-
-        var user = new User({ email, password });
-
-        let saveResult = await user.save();
-
-        let token;
-        if (saveResult._id) {
-            token = createToken(saveResult._id);
-
+        if (password !== confirmpassword) {
+            // TODO: Check
         }
-        res.cookie('jwt', token, {
-            httpOnly: true,
-            maxAge: 10 * 1000 //ms
-        })
-        res.status(200).json({token});
-});
 
+        if (email !== confirmemail) {
+            // TODO: Check
+        }
+
+        try {
+            let user = new User(req.body);
+            saveResult = await user.save();
+            let token;
+            if (saveResult._id) {
+                token = createToken(saveResult._id);
+            }
+            res.cookie('jwt', token, {
+                httpOnly: true,
+                maxAge: 10 * 1000 //ms
+            })
+            res.status(200).json(registerResult);
+        } catch (error) {
+            let result = handleErrors(error);
+            registerResult.success = false;
+            res.status(200).json({...registerResult, ...result});
+        }
+    }
+);
 
 router.post('/login',
     async function (req, res) {
-        let { email , password } = req.body;
+        let loginResult = {
+            success: true,
+            formErrors: {},
+            globalErrorMessage: ''
+        }
+        let { email, password } = req.body;
         try {
             const user = await User.login(email, password);
             if (user._id) {
@@ -84,16 +103,18 @@ router.post('/login',
                 httpOnly: true,
                 maxAge: 10 * 1000 //ms
             })
-            res.status(200).json({user: user._id})
+            res.status(200).json(loginResult);
         } catch (error) {
-            res.status(400).json({});
+            let result = handleErrors(error);
+            loginResult.success = false;
+            res.status(200).json({...loginResult, ...result});
         }
+    });
+
+router.get('/profileLoggedIn',
+
+    function (req, res, next) {
+        res.render('profileLoggedIn')
 
 });
-
-// router.get('/profileLoggedIn',
-//     function (req, res, next) {
-//         res.render('profileLoggedIn')
-
-// });
 module.exports = router;
