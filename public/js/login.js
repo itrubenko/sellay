@@ -1,34 +1,67 @@
-setTimeout(function() {
-    $('body').on('submit', '.profile', async function (e) {
+$(document).ready(function () {
+    function populateFormErrors($form, formErrors) {
+        Object.keys(formErrors).forEach(field => {
+            let $el = $form.find(`[name=${field}]`);
+            $el.after(`<div class="error-message" style='color:red'> ${formErrors[field]}</div>`)
+        })
+    }
+    $('body').on('submit', '.register-form', async function (e) {
         e.preventDefault();
-        var formData = new FormData(this);
-        let request = await fetch('users/register',{
-              headers: {
-                "Content-Type": "application/json",
-            },
-            method: 'POST',
-            body: JSON.stringify(Object.fromEntries(formData))
+        const $registerForm = $(this);
+        $registerForm.find('error-message, .js-global-error').empty();
+        $.ajax({
+            method: "POST",
+            url: "users/register",
+            data: $registerForm.serialize()
+        })
+        .done(function (result) {
+            if (result.success) {
+                window.location.assign('users/profile');
+            } else {
+                let fieldNames = Object.keys(result.formErrors);
+                if (fieldNames.length) {
+                    populateFormErrors($registerForm, result.formErrors);
+                } else if (result.globalErrorMessage) {
+                    $registerForm.find('.js-global-error').append(
+                        `<div class="alert alert-warning" hidden role="alert">
+                            ${result.globalErrorMessage}
+                        </div>`
+                    )
+                }
+            }
+        })
+        .fail(function() {
+            console.log('Failed one');
         });
-
-        var result = await request.json();
-        console.log(result);
     });
 
-    $('body').on('submit', '.profile1', async function (e) {
+    $('body').on('submit', '.login-form', async function (e) {
         e.preventDefault();
-        var formData = new FormData(this);
-        let request = await fetch('users/login',{
-              headers: {
-                "Content-Type": "application/json",
-            },
-            method: 'POST',
-            body: JSON.stringify(Object.fromEntries(formData))
-        });
-
-        var result = await request.json();
-        if (result.user) {
-            window.location.assign('users/profile')
-        }
-        console.log(result);
+        const $loginForm = $(this);
+        $loginForm.find('.error-message, .js-global-error').empty();
+        $.ajax({
+            method: "POST",
+            url: "users/login",
+            data: $loginForm.serialize()
+        })
+        .done(function (result) {
+            if (result.success) {
+                window.location.assign('users/profile');
+            } else {
+                let fieldNames = Object.keys(result.formErrors);
+                if (fieldNames.length) {
+                    populateFormErrors($loginForm, result.formErrors);
+                } else if (result.globalErrorMessage) {
+                    $loginForm.find('.js-global-error').append(
+                        `<div class="alert alert-warning" role="alert">
+                            ${result.globalErrorMessage}
+                        </div>`
+                    )
+                }
+            }
+        })
+        .fail(function() {
+            console.log('Failed one');
+        })
     });
-}, 2000)
+});

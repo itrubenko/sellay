@@ -1,5 +1,5 @@
 <% layout("./layout") %>
-    <script async src="./js/main.js"></script>
+    <script defer src="./js/main.js"></script>
     <ul class="nav justify-content-end">
         <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="#">Active</a>

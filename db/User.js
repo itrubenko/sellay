@@ -1,13 +1,60 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const bcrypt = require('bcrypt');
+const validator = require('validator');
 
 const saltRounds = 10;
-
+const MANDATORY_FIELDS =  'Mandatory fields';
 
 const userSchema = new Schema({
-   email: String,
-   password: String
+   lastName: {
+      type: String,
+      required: [true, MANDATORY_FIELDS ],
+      minLength: [2, 'Too short'],
+      maxLength: [20, 'Too long']
+   },
+   firstName: {
+      type: String,
+      required: [true, MANDATORY_FIELDS ],
+      minLength: [2, 'Too short'],
+      maxLength: [20, 'Too long']
+   },
+   phone: {
+      type: String,
+      validate: {
+         validator: function (v) {
+            return /\d{3}/.test(v);
+            // return /\d{3}-\d{3}-\d{4}/.test(v);
+         },
+         message: props => `${props.value} is not a valid phone number!`
+      },
+      required: [true, 'User phone number required']
+   },
+   email: {
+      type: String,
+      required: [true, MANDATORY_FIELDS],
+      unique: true,
+      lowercase: true,
+      validate: [validator.isEmail, 'Wrong Email']
+   },
+   confirmemail: {
+      type: String,
+      required: [true, MANDATORY_FIELDS],
+      lowercase: true,
+      validate: [validator.isEmail, 'Wrong Email']
+   },
+   password: {
+      type: String,
+      required: [true, MANDATORY_FIELDS]
+   },
+   confirmpassword: {
+      type: String,
+      required: [true, MANDATORY_FIELDS]
+   },
+   rememberme: {
+      type: Boolean,
+      default: false
+   }
 });
 
 userSchema.statics.login = async function(email, password) {
@@ -31,7 +78,6 @@ userSchema.pre('save', async function (next) {
    next();
 });
 
-//Compiling our schema into a Model.
 const User = mongoose.model('User', userSchema);
 
 module.exports = User

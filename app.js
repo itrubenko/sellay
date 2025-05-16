@@ -1,16 +1,16 @@
 
-var createError = require('http-errors');
-var express = require('express');
-var cors = require("cors");
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var bodyParser = require('body-parser')
+const createError = require('http-errors');
+const express = require('express');
+const cors = require("cors");
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const bodyParser = require('body-parser')
 const { Eta } = require("eta");
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var app = express();
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const app = express();
 
 const dotenv = require('dotenv');
 dotenv.config();

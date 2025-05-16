@@ -3,3 +3,24 @@
 3.Have customer ID from DB create JWT
 4.Set JWT cookie in browser
 5.Validate JWT for all protected routes.
+
+<!-- // Done -->
+Create account flow
+1. Send username/password
+2. Validate data before saving to model
+3. Bycrypt password before save
+4. Save pass Bycrypted password in model
+5. Create jwt with user id and set it in cookie 
+6. Redirect user to my account 
+7. Validate JWT ,decode it , find user with such an id, let it go or logout
+
+
+<!-- // Done -->
+1. Prepare fully developed Login-Show like page.+
+2. Redirect login user to profile page+
+
+
+// TODO 
+1. Move my image docker image to ECR.
+1.1. Components NodeJS, MongoDB, MongoDB Express
+2. Login with google account https://developers.google.com/identity/protocols/oauth2/web-server?hl=ru#node.js

@@ -1,0 +1,13 @@
+## Register user
+POST http://localhost:3000/users/register HTTP/1.1
+content-type: application/json
+
+{
+    "firstName": "sds",
+    "lastName": "d3434",
+    "email": "me@ukr.net",
+    "confirmemail": "me@ukr.net",
+    "password": "pass",
+    "confirmpassword": "pass1",
+    "phone": 433
+}
