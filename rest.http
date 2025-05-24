@@ -1,5 +1,5 @@
 ## Register user
-POST http://localhost:3000/users/register HTTP/1.1
+POST http://localhost:3000/account/register HTTP/1.1
 content-type: application/json
 
 {
@@ -10,4 +10,17 @@ content-type: application/json
     "password": "pass",
     "confirmpassword": "pass1",
     "phone": 433
+}
+
+### Google OAuth
+GET http://localhost:3000/auth/google?test=2 HTTP/1.1
+
+### Facebook 
+POST http://localhost:3000/auth/facebook/login HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Igor Trubenko",
+    "email": "mess4me@ukr.net",
+    "id": "10234906982713841"
 }

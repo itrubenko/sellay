@@ -1,5 +1,8 @@
 <% layout("./layout") %>
+
+    <script defer src="./js/formHelpers.js"> </script>
     <script defer src="./js/login.js"> </script>
+
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button"
@@ -29,6 +32,15 @@
                     <button type="submit" class="btn btn-primary mb-3">Login</button>
                 </div>
             </form>
+
+            <div><a href="/google"> Login with Google </a></div>
+            <div><a href="/github"> Login with Github </a></div>
+            <div>
+            <fb:login-button
+                scope="public_profile,email"
+                onlogin="checkLoginState();"
+            ></fb:login-button>
+            </div>
         </div>
         <div class="tab-pane" id="createAccount" role="tabpanel" aria-labelledby="createAccount-tab" tabindex="0">
             <form action="POST" class="row g-3 register-form">

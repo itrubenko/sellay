@@ -1,36 +1,51 @@
+function checkLoginState() {
+    FB.getLoginStatus(function (response) {
+        if (response.authResponse) {
+            console.log('Welcome!  Fetching your information.... ');
+            FB.api('/me', {fields: 'name, email'}, function(response) {
+                console.log(response);
+                $.ajax({
+                    method: "POST",
+                    url: '/auth/facebook/login',
+                    data: response
+                })
+                .done(result => {
+                    if (result.success) {
+                        window.location.assign(result.redirectURL);
+                    }
+                })
+                .fail(err => {
+                    console.log(err);
+                });
+        });
+       } else {
+            console.log('User cancelled login or did not fully authorize.'); }
+    });
+}
+
 $(document).ready(function () {
-    function populateFormErrors($form, formErrors) {
-        Object.keys(formErrors).forEach(field => {
-            let $el = $form.find(`[name=${field}]`);
-            $el.after(`<div class="error-message" style='color:red'> ${formErrors[field]}</div>`)
-        })
-    }
     $('body').on('submit', '.register-form', async function (e) {
         e.preventDefault();
         const $registerForm = $(this);
-        $registerForm.find('error-message, .js-global-error').empty();
+        $registerForm.find('.error-message, .js-global-error').empty();
         $.ajax({
             method: "POST",
-            url: "users/register",
+            url: "account/register",
             data: $registerForm.serialize()
         })
         .done(function (result) {
             if (result.success) {
-                window.location.assign('users/profile');
+                window.location.assign('/account');
             } else {
                 let fieldNames = Object.keys(result.formErrors);
                 if (fieldNames.length) {
                     populateFormErrors($registerForm, result.formErrors);
                 } else if (result.globalErrorMessage) {
-                    $registerForm.find('.js-global-error').append(
-                        `<div class="alert alert-warning" hidden role="alert">
-                            ${result.globalErrorMessage}
-                        </div>`
-                    )
+                    handleGlobalError($registerForm, '.js-global-error', result.globalErrorMessage);
                 }
             }
         })
-        .fail(function() {
+        .fail(function () {
             console.log('Failed one');
         });
     });
@@ -41,27 +56,25 @@ $(document).ready(function () {
         $loginForm.find('.error-message, .js-global-error').empty();
         $.ajax({
             method: "POST",
-            url: "users/login",
+            url: "account/login",
             data: $loginForm.serialize()
         })
-        .done(function (result) {
-            if (result.success) {
-                window.location.assign('users/profile');
-            } else {
-                let fieldNames = Object.keys(result.formErrors);
-                if (fieldNames.length) {
-                    populateFormErrors($loginForm, result.formErrors);
-                } else if (result.globalErrorMessage) {
-                    $loginForm.find('.js-global-error').append(
-                        `<div class="alert alert-warning" role="alert">
-                            ${result.globalErrorMessage}
-                        </div>`
-                    )
+            .done(function (result) {
+                if (result.success) {
+                    window.location.assign('/account');
+                } else {
+                    let fieldNames = Object.keys(result.formErrors);
+                    if (fieldNames.length) {
+                        populateFormErrors($loginForm, result.formErrors);
+                    } else if (result.globalErrorMessage) {
+                        handleGlobalError($loginForm, '.js-global-error', result.globalErrorMessage);
+                    }
                 }
-            }
-        })
-        .fail(function() {
-            console.log('Failed one');
-        })
+            })
+            .fail(function (err) {
+                handleGlobalError($loginForm, '.js-global-error', err.statusText);
+                console.log('Failed one');
+                console.log(err);
+            })
     });
 });
