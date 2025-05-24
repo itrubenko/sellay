@@ -28,7 +28,7 @@ const userSchema = new Schema({
          },
          message: props => `${props.value} is not a valid phone number!`
       },
-      required: [true, 'User phone number required']
+      required: [false, 'User phone number required']
    },
    email: {
       type: String,

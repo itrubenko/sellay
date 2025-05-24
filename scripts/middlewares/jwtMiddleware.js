@@ -5,7 +5,7 @@ const authSource = (req, res, next) => {
 
     jwt.verify(jwtCookie, 'secret_jwt', function (err, decoded) {
         if (!decoded) {
-            return res.redirect('/users');
+            return res.redirect('/login');
         }
         next();
     });
