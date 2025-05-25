@@ -23,7 +23,27 @@ const createCustomerToken = (res, id) => {
     return token;
 }
 
+function authenticateGlobalToken(req, res, next) {
+    const token = req.cookies.jwt_global;
+
+    if ((req.url.startsWith('/loginGlobal') ||
+        req.headers.referer && req.headers.referer.endsWith('/loginGlobal'))
+    ) {
+        res.locals.admin = true;
+        return next();
+    }
+
+    if (!token) return res.status(401).redirect('/loginGlobal');
+
+    jwt.verify(token, SITE_SECRET, (err, user) => {
+        if (err) return res.status(403).redirect('/loginGlobal');
+        req.user = user;
+        next();
+    });
+}
+
 module.exports = {
     createJWTToken: createCustomerToken,
-    authSource
+    authSource,
+    authenticateGlobalToken
 }

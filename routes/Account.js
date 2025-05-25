@@ -90,10 +90,12 @@ router.post('/login',
             globalErrorMessage: ''
         }
         let { email, password } = req.body;
+        let isAdmin = res.locals.admin;
+        delete res.locals.admin;
         try {
             const user = await User.login(email, password);
             if (user._id) {
-                token = createJWTToken(res, user._id);
+                token = createJWTToken(res, user._id, isAdmin);
             }
             res.status(200).json(loginResult);
         } catch (error) {

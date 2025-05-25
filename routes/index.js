@@ -16,6 +16,16 @@ route.get('/', function (req, res) {
     res.render('index', { title: 'Express 1' });
 });
 
+/* GET home page. */
+route.get('/loginGlobal', function (req, res) {
+    const payload = {
+        registerFormActionURL: '/register',
+        loginFormActionURL: '/account/login',
+        adminLoginForm: true
+    }
+    res.render('profile', payload);
+});
+
 route.get('/google', function (req, res) {
     const { google } = require('googleapis');
     const crypto = require('crypto');
