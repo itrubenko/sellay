@@ -20,7 +20,20 @@ Create account flow
 2. Redirect login user to profile page+
 
 
-// TODO 
+// TODO
 1. Move my image docker image to ECR.
 1.1. Components NodeJS, MongoDB, MongoDB Express
 2. Login with google account https://developers.google.com/identity/protocols/oauth2/web-server?hl=ru#node.js
+3. https://console.cloud.google.com/auth/overview?inv=1&invt=AbyEng&project=sellay
+
+sso github
+https://github.com/settings/applications
+
+sso facebook
+https://developers.facebook.com/apps/2070816173415614/dashboard/
+
+SSO Apple
+https://developer.apple.com/documentation/signinwithapple/configuring-your-webpage-for-sign-in-with-apple
+
+
+protect site full site with password

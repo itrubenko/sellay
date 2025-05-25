@@ -25,7 +25,7 @@ app.use('/uploads', express.static('uploads'));
 
 app.disable('strict routing');
 
-// TODO: Rewire this apploach
+// TODO: Rewrire this apploach
 // Remove trailing slashes (except root) /login/ -> /login
 app.use((req, res, next) => {
     if (req.path.length > 1 && req.path.endsWith('/')) {
