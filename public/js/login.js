@@ -27,12 +27,10 @@ $(document).ready(function () {
     $('body').on('submit', '.register-form', async function (e) {
         e.preventDefault();
         const $registerForm = $(this);
+        const url = $registerForm.attr('action');
+        const data = $registerForm.serialize();
         $registerForm.find('.error-message, .js-global-error').empty();
-        $.ajax({
-            method: "POST",
-            url: "account/register",
-            data: $registerForm.serialize()
-        })
+        $.ajax({ method: "POST", url, data})
         .done(function (result) {
             if (result.success) {
                 window.location.assign('/account');
@@ -46,19 +44,18 @@ $(document).ready(function () {
             }
         })
         .fail(function () {
-            console.log('Failed one');
+            handleGlobalError($registerForm, '.js-global-error', err.statusText);
         });
     });
 
     $('body').on('submit', '.login-form', async function (e) {
         e.preventDefault();
         const $loginForm = $(this);
+        const url = $loginForm.attr('action');
+        const data = $loginForm.serialize();
+
         $loginForm.find('.error-message, .js-global-error').empty();
-        $.ajax({
-            method: "POST",
-            url: "account/login",
-            data: $loginForm.serialize()
-        })
+        $.ajax({ method: "POST", url, data})
             .done(function (result) {
                 if (result.success) {
                     window.location.assign('/account');
@@ -73,8 +70,6 @@ $(document).ready(function () {
             })
             .fail(function (err) {
                 handleGlobalError($loginForm, '.js-global-error', err.statusText);
-                console.log('Failed one');
-                console.log(err);
             })
     });
 });

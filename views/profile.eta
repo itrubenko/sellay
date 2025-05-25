@@ -3,20 +3,93 @@
     <script defer src="./js/formHelpers.js"> </script>
     <script defer src="./js/login.js"> </script>
 
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button"
-                role="tab" aria-controls="login" aria-selected="true">Login</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="createAccount-tab" data-bs-toggle="tab" data-bs-target="#createAccount" type="button"
-                role="tab" aria-controls="createAccount" aria-selected="false">Create Account</button>
-        </li>
-    </ul>
+    <% if (!it.adminLoginForm) { %>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button"
+                    role="tab" aria-controls="login" aria-selected="true">Login</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="createAccount-tab" data-bs-toggle="tab" data-bs-target="#createAccount" type="button"
+                    role="tab" aria-controls="createAccount" aria-selected="false">Create Account</button>
+            </li>
+        </ul>
 
-    <div class="tab-content">
+        <div class="tab-content">
+            <div class="tab-pane active" id="login" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
+                <form method="POST" class="row g-3 login-form" action="<%= it.loginFormActionURL %>">
+                    <div class="js-global-error"></div>
+                    <div class="col-auto">
+                        Email:
+                        <label for="email" class="visually-hidden">Email</label>
+                        <input type="text" class="form-control" id="email" value="" name="email">
+                    </div>
+                    <div class="col-auto">
+                        Password:
+                        <label for="password" class="visually-hidden">Password</label>
+                        <input type="text" class="form-control" id="password" name="password">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary mb-3">Login</button>
+                    </div>
+                </form>
+
+                <div><a href="/google"> Login with Google </a></div>
+                <div><a href="/github"> Login with Github </a></div>
+                <div>
+                <fb:login-button
+                    scope="public_profile,email"
+                    onlogin="checkLoginState();"
+                ></fb:login-button>
+                </div>
+            </div>
+            <div class="tab-pane" id="createAccount" role="tabpanel" aria-labelledby="createAccount-tab" tabindex="0">
+                <form method="POST" class="row g-3 register-form" action="<%= it.registerFormActionURL %>">
+                    <div class="js-global-error"></div>
+                    <div class="col-auto">
+                        <label for="firstName" class="visually-hidden">First name</label>
+                        First name:
+                        <input type="text" class="form-control" name="firstName">
+                    </div>
+                    <div class="col-auto">
+                        Last Name:
+                        <label for="lastName" class="visually-hidden">Last Name</label>
+                        <input type="text" class="form-control" name="lastName">
+                    </div>
+                    <div class="col-auto">
+                        Phone:
+                        <label for="phone" class="visually-hidden">Phone</label>
+                        <input type="text" class="form-control" name="phone">
+                    </div>
+                    <div class="col-auto">
+                        Email:
+                        <label for="email" class="visually-hidden">Email</label>
+                        <input type="text" class="form-control" name="email">
+                    </div>
+                    <div class="col-auto">
+                        <label for="confirmemail" class="visually-hidden">Confirm Email</label>
+                        Confirm Email:
+                        <input type="text" class="form-control" id="confirmemail" name="confirmemail">
+                    </div>
+                    <div class="col-auto">
+                        Password:
+                        <label for="password" class="visually-hidden">Password</label>
+                        <input type="text" class="form-control" name="password">
+                    </div>
+                    <div class="col-auto">
+                        Confirm Password:
+                        <label for="confirmpassword" class="visually-hidden">Confirm Password</label>
+                        <input type="text" class="form-control" name="confirmpassword">
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary mb-3">Create Account</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <% } else { %>
         <div class="tab-pane active" id="login" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
-            <form action="POST" class="row g-3 login-form">
+            <form method="POST" class="row g-3 login-form" action="<%= it.loginFormActionURL %>">
                 <div class="js-global-error"></div>
                 <div class="col-auto">
                     Email:
@@ -32,57 +105,5 @@
                     <button type="submit" class="btn btn-primary mb-3">Login</button>
                 </div>
             </form>
-
-            <div><a href="/google"> Login with Google </a></div>
-            <div><a href="/github"> Login with Github </a></div>
-            <div>
-            <fb:login-button
-                scope="public_profile,email"
-                onlogin="checkLoginState();"
-            ></fb:login-button>
-            </div>
         </div>
-        <div class="tab-pane" id="createAccount" role="tabpanel" aria-labelledby="createAccount-tab" tabindex="0">
-            <form action="POST" class="row g-3 register-form">
-                <div class="js-global-error"></div>
-                <div class="col-auto">
-                    <label for="firstName" class="visually-hidden">First name</label>
-                    First name:
-                    <input type="text" class="form-control" name="firstName">
-                </div>
-                <div class="col-auto">
-                    Last Name:
-                    <label for="lastName" class="visually-hidden">Last Name</label>
-                    <input type="text" class="form-control" name="lastName">
-                </div>
-                <div class="col-auto">
-                    Phone:
-                    <label for="phone" class="visually-hidden">Phone</label>
-                    <input type="text" class="form-control" name="phone">
-                </div>
-                <div class="col-auto">
-                    Email:
-                    <label for="email" class="visually-hidden">Email</label>
-                    <input type="text" class="form-control" name="email">
-                </div>
-                <div class="col-auto">
-                    <label for="confirmemail" class="visually-hidden">Confirm Email</label>
-                    Confirm Email:
-                    <input type="text" class="form-control" id="confirmemail" name="confirmemail">
-                </div>
-                <div class="col-auto">
-                    Password:
-                    <label for="password" class="visually-hidden">Password</label>
-                    <input type="text" class="form-control" name="password">
-                </div>
-                <div class="col-auto">
-                    Confirm Password:
-                    <label for="confirmpassword" class="visually-hidden">Confirm Password</label>
-                    <input type="text" class="form-control" name="confirmpassword">
-                </div>
-                <div>
-                    <button type="submit" class="btn btn-primary mb-3">Create Account</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <% } %>
