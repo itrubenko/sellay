@@ -5,55 +5,47 @@ const cors = require("cors");
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser')
-const { Eta } = require("eta");
-const fs = require('fs');
-const morgan = require('morgan');
-// create a write stream (in append mode)
-const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
 
-const indexRouter = require('./routes/Index');
-const usersRouter = require('./routes/Login');
-const accountRouter = require('./routes/Account');
+const { setupViewEngine, setupLogging, connectDB } = require('./scripts/globalHelpers');
+const { setupRoutes } = require('./scripts/routes');
 const app = express();
-
-// setup the logger
-app.use(morgan('common', { stream: accessLogStream }));
 
 const dotenv = require('dotenv');
 dotenv.config();
 
-const eta = new Eta({ views: path.join(__dirname, "views") });
-app.engine("eta", buildEtaEngine());
-app.set("view engine", "eta");
-app.set('views', path.join(__dirname, 'views'));
-
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.text({type: '/'}));
+
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static('uploads'));
 
-app.use('/', indexRouter);
-app.use('/login', usersRouter);
-app.use('/account', accountRouter);
+app.disable('strict routing');
+
+// TODO: Rewire this apploach
+// Remove trailing slashes (except root) /login/ -> /login
+app.use((req, res, next) => {
+    if (req.path.length > 1 && req.path.endsWith('/')) {
+      res.redirect(301, req.path.slice(0, -1) + req.url.slice(req.path.length));
+    } else {
+      next();
+    }
+});
+
+setupViewEngine(app, __dirname);
+setupRoutes(app);
+
+setupLogging(app);
+
+connectDB(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     next(createError(404));
 });
-
-const mongoose = require('mongoose');
-const connect = async () => {
-    mongoose.connect('mongodb://root:example@localhost:27017/sellay?authSource=admin')
-        .then(() => console.log('Connected to database movieDB'))
-        .catch((err) => console.log(err));
-}
-
-connect();
-
 
 // error handler
 app.use(function(err, req, res) {
@@ -66,15 +58,4 @@ app.use(function(err, req, res) {
     res.render('error');
 });
 
-function buildEtaEngine() {
-    return (path, opts, callback) => {
-        try {
-            const fileContent = eta.readFile(path);
-            const renderedTemplate = eta.renderString(fileContent, opts);
-            callback(null, renderedTemplate);
-        } catch (error) {
-            callback(error);
-        }
-    };
-}
 module.exports = app;
