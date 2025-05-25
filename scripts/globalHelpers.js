@@ -3,9 +3,9 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const path = require('path');
 
-const setupLogging = app => {
+const setupLogging = (app, dir) => {
     // create a write stream (in append mode)
-    const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+    const accessLogStream = fs.createWriteStream(path.join(dir, 'access.log'), { flags: 'a' });
     // setup the logger
     app.use(morgan('common', { stream: accessLogStream }));
 }

@@ -38,17 +38,11 @@ app.use((req, res, next) => {
 
 // Protect all routes below this line
 app.use(authenticateGlobalToken);
-
-const fs = require('fs');
-const morgan = require('morgan');
-const accessLogStream = fs.createWriteStream(path.join(__dirname + '/logs', 'access.log'), { flags: 'a' });
-app.use(morgan('common', { stream: accessLogStream }));
-
 setupViewEngine(app, __dirname);
+
+setupLogging(app, __dirname + '/logs');
+
 setupRoutes(app);
-
-// setupLogging(app);
-
 connectDB(app);
 
 // catch 404 and forward to error handler
