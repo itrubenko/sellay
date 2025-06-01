@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser')
 
 const { setupViewEngine, setupLogging, connectDB } = require('./scripts/globalHelpers');
-const { authenticateGlobalToken } = require('./scripts/middlewares/jwtMiddleware');
+const { authenticateAdminToken } = require('./scripts/middlewares/jwtMiddleware');
 const { setupRoutes } = require('./scripts/routes');
 const app = express();
 
@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 });
 
 // Protect all routes below this line
-app.use(authenticateGlobalToken);
+app.use(authenticateAdminToken);
 setupViewEngine(app, __dirname);
 
 setupLogging(app, __dirname + '/logs');
@@ -47,7 +47,7 @@ connectDB(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-    next(createError(404));
+    next(createError(404, 'Endpoint not found'));
 });
 
 // error handler

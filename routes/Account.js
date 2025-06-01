@@ -90,6 +90,12 @@ router.post('/login',
             globalErrorMessage: ''
         }
         let { email, password } = req.body;
+        // TODO: Params validation flow for all endpoints
+        if (!email || !password) {
+            loginResult.success = false;
+            loginResult.globalErrorMessage = "Insufficiant params";
+            return res.status(200).json(loginResult);
+        }
         let isAdmin = res.locals.admin;
         delete res.locals.admin;
         try {

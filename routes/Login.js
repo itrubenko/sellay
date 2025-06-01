@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get('/', function (req, res) {
     const payload = {
-        registerFormActionURL: '/register',
+        registerFormActionURL: '/account/register',
         loginFormActionURL: '/account/login'
     }
     res.render('profile', payload);
