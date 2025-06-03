@@ -36,6 +36,13 @@ SSO Apple
 https://developer.apple.com/documentation/signinwithapple/configuring-your-webpage-for-sign-in-with-apple
 
 
+Google
+https://cloud.google.com/security/products/recaptcha?hl=ru
+https://www.google.com/recaptcha/admin/site/726747646
+https://console.cloud.google.com/security/recaptcha/6Lf-SVErAAAAAPvKiNtTOKX9226qhLf1oaUjz8K0/overview?project=sellay&authuser=0&inv=1&invt=Aby4Ag
+
 protect site full site with password
-1.Create endpoint for login in site
-2. 
+1. Create endpoint for login in site - done
+2. Add Google Recapcha
+3. Add Google chatbot
+4. Add GTM

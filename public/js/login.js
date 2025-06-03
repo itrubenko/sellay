@@ -53,46 +53,40 @@ $(document).ready(function () {
         e.preventDefault();
         const $loginForm = $(this);
         const url = $loginForm.attr('action');
-        const data = $loginForm.serialize();
+        let data = $loginForm.serialize();
 
-        grecaptcha.enterprise.ready(async () => {
-            const token = await grecaptcha.enterprise.execute('6LfaJFErAAAAAN9UY8Bl6yHkQpMcrxWqUh66hTMI', { action: 'LOGIN' });
-            let result = await fetch('https://recaptchaenterprise.googleapis.com/v1/projects/sellay/assessments?key=AIzaSyBf6SjmgQhUwADJG63FG2O11yK_-IUgF_Q', {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    "event": {
-                        "token": token,
-                        "expectedAction": "USER_ACTION",
-                        "siteKey": "6LfaJFErAAAAAN9UY8Bl6yHkQpMcrxWqUh66hTMI",
-                    }
+        $loginForm.find('.error-message, .js-global-error').empty();
+        grecaptcha.ready(function () {
+            grecaptcha.execute(window.Preferences.RECAPTCHA_KEY, { action: 'LOGIN' }).then(function (token) {
+                fetch('/account/verify-recaptcha', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token })
                 })
-            });
-
-            let assessment = await result.json();
-            if (assessment.riskAnalysis.score > 0.1) {
-                $loginForm.find('.error-message, .js-global-error').empty();
-                $.ajax({ method: "POST", url, data })
-                    .done(function (result) {
+                    .then(res => res.json())
+                    .then(result => {
                         if (result.success) {
-                            window.location.assign('/account');
+                            $.ajax({ method: "POST", url, data })
+                                .done(function (result) {
+                                    if (result.success) {
+                                        window.location.assign('/account');
+                                    } else {
+                                        let fieldNames = Object.keys(result.formErrors);
+                                        if (fieldNames.length) {
+                                            populateFormErrors($loginForm, result.formErrors);
+                                        } else if (result.globalErrorMessage) {
+                                            handleGlobalError($loginForm, '.js-global-error', result.globalErrorMessage);
+                                        }
+                                    }
+                                })
+                                .fail(function (err) {
+                                    handleGlobalError($loginForm, '.js-global-error', err.statusText);
+                                })
                         } else {
-                            let fieldNames = Object.keys(result.formErrors);
-                            if (fieldNames.length) {
-                                populateFormErrors($loginForm, result.formErrors);
-                            } else if (result.globalErrorMessage) {
-                                handleGlobalError($loginForm, '.js-global-error', result.globalErrorMessage);
-                            }
+                            alert('reCAPTCHA failed');
                         }
-                    })
-                    .fail(function (err) {
-                        handleGlobalError($loginForm, '.js-global-error', err.statusText);
-                    })
-            }
-        }
-        );
-
+                    });
+            });
+        });
     });
 });

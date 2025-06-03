@@ -53,7 +53,12 @@ const buildEtaEngine = (eta) => {
 
 const setupViewEngine = (app, dirname) => {
     const { Eta } = require("eta");
-    const eta = new Eta({ views: path.join(dirname, "views") });
+    const preferences = require('./preferences');
+    const data = JSON.stringify({ preferences });
+    const eta = new Eta({
+        views: path.join(dirname, "views"),
+        functionHeader:`Object.entries(${data}||{}).forEach(([k,v])=>globalThis[k]=v)`
+    });
     app.engine("eta", buildEtaEngine(eta));
     app.set("view engine", "eta");
     app.set('views', path.join(dirname, 'views'));

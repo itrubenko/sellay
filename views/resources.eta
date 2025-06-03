@@ -1,0 +1,3 @@
+<script>
+    window.Preferences = <%~ JSON.stringify(preferences) %>
+</script>

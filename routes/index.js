@@ -19,7 +19,7 @@ route.get('/', function (req, res) {
 /* GET home page. */
 route.get('/loginGlobal', function (req, res) {
     const payload = {
-        registerFormActionURL: '/register',
+        registerFormActionURL: '/account/register',
         loginFormActionURL: '/account/login',
         adminLoginForm: true
     }
@@ -29,7 +29,7 @@ route.get('/loginGlobal', function (req, res) {
 route.get('/google', function (req, res) {
     const { google } = require('googleapis');
     const crypto = require('crypto');
-    const { GOOGLE_CLIENT_ID,  GOOGLE_SECRET_ID, GOOGLE_CALLBACK_URL} = process.env;
+    const { GOOGLE_CLIENT_ID, GOOGLE_SECRET_ID, GOOGLE_CALLBACK_URL } = process.env;
     /**
      * To use OAuth2 authentication, we need access to a CLIENT_ID, CLIENT_SECRET, AND REDIRECT_URI
      * from the client_secret.json file. To get these credentials for your application, visit

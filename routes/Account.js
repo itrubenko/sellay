@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../db/User');
 const { authSource } = require('../scripts/middlewares/jwtMiddleware');
 const { createJWTToken } = require('../scripts/jwtHelpers');
+const axios = require('axios');
 
 router.get('/', authSource, function (req, res) {
     res.render('profileLoggedIn');
@@ -15,8 +16,8 @@ function handleErrors(err) {
     };
 
     if (err.name === 'ValidationError') {
-        Object.values(err.errors).forEach(function(field) {
-            errors.formErrors[field.path] = field.message ;
+        Object.values(err.errors).forEach(function (field) {
+            errors.formErrors[field.path] = field.message;
         });
     }
 
@@ -67,7 +68,7 @@ router.post('/register',
         } catch (error) {
             let result = handleErrors(error);
             registerResult.success = false;
-            res.status(200).json({...registerResult, ...result});
+            res.status(200).json({ ...registerResult, ...result });
         }
     }
 );
@@ -82,6 +83,46 @@ router.post('/register',
 // router.post('/DoSetNewPassword', async function(req, res));
 // router.post('/SaveNewPassword', async function(req, res));
 
+/**
+  * Create an assessment to analyze the risk of a UI action.
+  *
+  * projectID: Your Google Cloud Project ID.
+  * recaptchaSiteKey: The reCAPTCHA key associated with the site/app
+  * token: The generated token obtained from the client.
+  * recaptchaAction: Action name corresponding to the token.
+  */
+
+router.post('/verify-recaptcha', async (req, res) => {
+    const token = req.body.token;
+
+    if (!token) {
+        return res.status(400).json({ success: false, message: 'Token is missing' });
+    }
+
+    try {
+        const response = await axios.post(`https://recaptchaenterprise.googleapis.com/v1/projects/sellay/assessments?key=${process.env.SELLAY_API_KEY}`, {
+            "event": {
+              "token": token,
+              "expectedAction": "USER_ACTION",
+              "siteKey": process.env.RECAPTCHA_KEY,
+            }
+        });
+
+
+        //  TODO: Handle proper logic here
+        if (response.status === 200 && response.data.riskAnalysis.score >= 0.5) {
+            // Valid human
+            return res.status(200).json({ success: true, message: 'reCAPTCHA verified', score: response.data.riskAnalysis.score });
+        } else {
+            // Possibly bot or low confidence
+            return res.status(403).json({ success: false, message: 'Failed reCAPTCHA verification', score: response.data.riskAnalysis.score });
+        }
+    } catch (error) {
+        return res.status(500).json({ success: false, message: 'Verification error', error: error.message });
+    }
+});
+
+
 router.post('/login',
     async function (req, res) {
         let loginResult = {
@@ -91,6 +132,7 @@ router.post('/login',
         }
         let { email, password } = req.body;
         // TODO: Params validation flow for all endpoints
+
         if (!email || !password) {
             loginResult.success = false;
             loginResult.globalErrorMessage = "Insufficiant params";
@@ -107,7 +149,7 @@ router.post('/login',
         } catch (error) {
             let result = handleErrors(error);
             loginResult.success = false;
-            res.status(200).json({...loginResult, ...result});
+            res.status(200).json({ ...loginResult, ...result });
         }
     }
 );

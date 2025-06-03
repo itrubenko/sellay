@@ -32,6 +32,7 @@
     <div>Header</div>
     <%~ it.body %>
     <%~ include("./header/recaptcha.eta") %>
+    <%~ include("./resources.eta") %>
     <div>Footer</div>
 </body>
 
