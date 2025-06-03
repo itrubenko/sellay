@@ -2,24 +2,25 @@ function checkLoginState() {
     FB.getLoginStatus(function (response) {
         if (response.authResponse) {
             console.log('Welcome!  Fetching your information.... ');
-            FB.api('/me', {fields: 'name, email'}, function(response) {
+            FB.api('/me', { fields: 'name, email' }, function (response) {
                 console.log(response);
                 $.ajax({
                     method: "POST",
                     url: '/auth/facebook/login',
                     data: response
                 })
-                .done(result => {
-                    if (result.success) {
-                        window.location.assign(result.redirectURL);
-                    }
-                })
-                .fail(err => {
-                    console.log(err);
-                });
-        });
-       } else {
-            console.log('User cancelled login or did not fully authorize.'); }
+                    .done(result => {
+                        if (result.success) {
+                            window.location.assign(result.redirectURL);
+                        }
+                    })
+                    .fail(err => {
+                        console.log(err);
+                    });
+            });
+        } else {
+            console.log('User cancelled login or did not fully authorize.');
+        }
     });
 }
 
@@ -30,46 +31,62 @@ $(document).ready(function () {
         const url = $registerForm.attr('action');
         const data = $registerForm.serialize();
         $registerForm.find('.error-message, .js-global-error').empty();
-        $.ajax({ method: "POST", url, data})
-        .done(function (result) {
-            if (result.success) {
-                window.location.assign('/account');
-            } else {
-                let fieldNames = Object.keys(result.formErrors);
-                if (fieldNames.length) {
-                    populateFormErrors($registerForm, result.formErrors);
-                } else if (result.globalErrorMessage) {
-                    handleGlobalError($registerForm, '.js-global-error', result.globalErrorMessage);
-                }
-            }
-        })
-        .fail(function () {
-            handleGlobalError($registerForm, '.js-global-error', err.statusText);
-        });
-    });
-
-    $('body').on('submit', '.login-form', async function (e) {
-        e.preventDefault();
-        const $loginForm = $(this);
-        const url = $loginForm.attr('action');
-        const data = $loginForm.serialize();
-
-        $loginForm.find('.error-message, .js-global-error').empty();
-        $.ajax({ method: "POST", url, data})
+        $.ajax({ method: "POST", url, data })
             .done(function (result) {
                 if (result.success) {
                     window.location.assign('/account');
                 } else {
                     let fieldNames = Object.keys(result.formErrors);
                     if (fieldNames.length) {
-                        populateFormErrors($loginForm, result.formErrors);
+                        populateFormErrors($registerForm, result.formErrors);
                     } else if (result.globalErrorMessage) {
-                        handleGlobalError($loginForm, '.js-global-error', result.globalErrorMessage);
+                        handleGlobalError($registerForm, '.js-global-error', result.globalErrorMessage);
                     }
                 }
             })
             .fail(function (err) {
-                handleGlobalError($loginForm, '.js-global-error', err.statusText);
-            })
+                handleGlobalError($registerForm, '.js-global-error', err.statusText);
+            });
+    });
+
+    $('body').on('submit', '.login-form', async function (e) {
+        e.preventDefault();
+        const $loginForm = $(this);
+        const url = $loginForm.attr('action');
+        let data = $loginForm.serialize();
+
+        $loginForm.find('.error-message, .js-global-error').empty();
+        grecaptcha.ready(function () {
+            grecaptcha.execute(window.Preferences.RECAPTCHA_KEY, { action: 'LOGIN' }).then(function (token) {
+                fetch('/account/verify-recaptcha', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token })
+                })
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.success) {
+                            $.ajax({ method: "POST", url, data })
+                                .done(function (result) {
+                                    if (result.success) {
+                                        window.location.assign('/account');
+                                    } else {
+                                        let fieldNames = Object.keys(result.formErrors);
+                                        if (fieldNames.length) {
+                                            populateFormErrors($loginForm, result.formErrors);
+                                        } else if (result.globalErrorMessage) {
+                                            handleGlobalError($loginForm, '.js-global-error', result.globalErrorMessage);
+                                        }
+                                    }
+                                })
+                                .fail(function (err) {
+                                    handleGlobalError($loginForm, '.js-global-error', err.statusText);
+                                })
+                        } else {
+                            alert('reCAPTCHA failed');
+                        }
+                    });
+            });
+        });
     });
 });

@@ -23,7 +23,7 @@ const createCustomerToken = (res, id) => {
     return token;
 }
 
-function authenticateGlobalToken(req, res, next) {
+function authenticateAdminToken(req, res, next) {
     const token = req.cookies.jwt_global;
 
     if ((req.url.startsWith('/loginGlobal') ||
@@ -45,5 +45,5 @@ function authenticateGlobalToken(req, res, next) {
 module.exports = {
     createJWTToken: createCustomerToken,
     authSource,
-    authenticateGlobalToken
+    authenticateAdminToken
 }
