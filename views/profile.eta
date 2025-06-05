@@ -1,9 +1,9 @@
-<% layout("./layout") %>
+<% layout("./layouts/layout.eta") %>
 
     <script defer src="./js/formHelpers.js"> </script>
     <script defer src="./js/login.js"> </script>
 
-    <% if (!it.adminLoginForm) { %>
+    <% if (!context.adminLoginForm) { %>
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button"
@@ -17,7 +17,7 @@
 
         <div class="tab-content">
             <div class="tab-pane active" id="login" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
-                <form method="POST" class="row g-3 login-form" action="<%= it.loginFormActionURL %>">
+                <form method="POST" class="row g-3 login-form" action="<%= context.loginFormActionURL %>">
                     <div class="js-global-error"></div>
                     <div class="col-auto">
                         Email:
@@ -44,7 +44,7 @@
                 </div>
             </div>
             <div class="tab-pane" id="createAccount" role="tabpanel" aria-labelledby="createAccount-tab" tabindex="0">
-                <form method="POST" class="row g-3 register-form" action="<%= it.registerFormActionURL %>">
+                <form method="POST" class="row g-3 register-form" action="<%= context.registerFormActionURL %>">
                     <div class="js-global-error"></div>
                     <div class="col-auto">
                         <label for="firstName" class="visually-hidden">First name</label>
@@ -89,7 +89,7 @@
         </div>
     <% } else { %>
         <div class="tab-pane active" id="login" role="tabpanel" aria-labelledby="login-tab" tabindex="0">
-            <form method="POST" class="row g-3 login-form" action="<%= it.loginFormActionURL %>">
+            <form method="POST" class="row g-3 login-form" action="<%= context.loginFormActionURL %>">
                 <div class="js-global-error"></div>
                 <div class="col-auto">
                     Email:

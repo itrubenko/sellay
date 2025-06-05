@@ -6,7 +6,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser')
 
-const { setupViewEngine, setupLogging, connectDB } = require('./scripts/globalHelpers');
+const { setupViewEngine, setupMorganLogging, connectMongoDB } = require('./scripts/globalHelpers');
 const { authenticateAdminToken } = require('./scripts/middlewares/jwtMiddleware');
 const { setupRoutes } = require('./scripts/routes');
 const app = express();
@@ -40,10 +40,10 @@ app.use((req, res, next) => {
 app.use(authenticateAdminToken);
 setupViewEngine(app, __dirname);
 
-setupLogging(app, __dirname + '/logs');
+setupMorganLogging(app, __dirname + '/logs');
 
 setupRoutes(app);
-connectDB(app);
+connectMongoDB(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
