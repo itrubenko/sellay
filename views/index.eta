@@ -1,4 +1,4 @@
-<% layout("./layout") %>
+<% layout("./layouts/layout.eta") %>
     <script defer src="./js/main.js"></script>
     <ul class="nav justify-content-end">
         <li class="nav-item">
@@ -21,7 +21,7 @@
         <button>Submit</button>
     </form>
 
-    <%~ include("./partial") %>
+    <%~ include("/partial") %>
 
         <div class="container">
             <h1>Multipart File Upload</h1>

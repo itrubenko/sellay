@@ -1,6 +1,6 @@
-<% layout("./layout") %>
-<h1> <%= it.message %></h1>
-<h2><%= it.error.status %></h2>
+<% layout("./layouts/layout") %>
+<h1> <%= context.message %></h1>
+<h2><%= context.error.status %></h2>
 <pre>
-    <%= it.error.stack %>
+    <%= context.error.stack %>
 </pre>

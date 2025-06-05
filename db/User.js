@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
 const bcrypt = require('bcrypt');
 const validator = require('validator');
+const { Schema } = mongoose;
+const { BRYPT_SALT } = require('../scripts/constants');
 
-const saltRounds = 10;
 const MANDATORY_FIELDS =  'Mandatory fields';
 
 const userSchema = new Schema({
@@ -37,17 +37,7 @@ const userSchema = new Schema({
       lowercase: true,
       validate: [validator.isEmail, 'Wrong Email']
    },
-   confirmemail: {
-      type: String,
-      required: [true, MANDATORY_FIELDS],
-      lowercase: true,
-      validate: [validator.isEmail, 'Wrong Email']
-   },
    password: {
-      type: String,
-      required: [true, MANDATORY_FIELDS]
-   },
-   confirmpassword: {
       type: String,
       required: [true, MANDATORY_FIELDS]
    },
@@ -71,7 +61,7 @@ userSchema.statics.login = async function(email, password) {
 
 userSchema.pre('save', async function (next) {
    if (this.password) {
-      let result = await bcrypt.hash(this.password, saltRounds);
+      let result = await bcrypt.hash(this.password, BRYPT_SALT);
       this.password = result;
    }
 
