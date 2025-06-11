@@ -47,7 +47,29 @@ https://console.cloud.google.com/security/recaptcha/6Lf-SVErAAAAAPvKiNtTOKX9226q
 
 protect site full site with password
 1. Create endpoint for login in site - done
-2. Add Google Recapcha
-3. Add Google chatbot
+2. Add Google Recapcha +
+3. Add Google chatbot +/-
 4. Add GTM
 5. PingID ... ping-identity/p14c-nodejs-sdk
+
+
+Idea: Buy/Sell flats
+Key advantages: To allow most price features for free
+
+Setup automatic deployemnt
+
+Devepment to cover:
+1. Internal chat
+2. Add GTM
+3. Google Analitics
+4. ChatBot
+5. Image Upload ( AWS )
+6. Render on site
+7. Image resizer
+
+
+Watch:
+Googgle analitics
+Watch imovie toturial
+Marketing tutorials
+
