@@ -1,0 +1,12 @@
+.git
+# /logs
+
+.vscode
+
+.idea
+.env
+
+/node_modules
+node_modules
+**/node_modules
+*/node_modules

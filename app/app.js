@@ -12,7 +12,7 @@ const { setupRoutes } = require('./scripts/routes');
 const app = express();
 
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config({ path: '../.env' });
 
 app.use(cookieParser());
 

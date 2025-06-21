@@ -5,7 +5,7 @@ const {
     JWT_EXP_TIME_ADMIN,
     USER_DB_SECRET,
     SITE_SECRET
-} = require('../scripts/constants');
+} = require('./constants');
 
 const createJWTToken = (res, id, isAdmin) => {
     const expiresTimeMS = isAdmin ? JWT_EXP_TIME_ADMIN : JWT_EXP_TIME;

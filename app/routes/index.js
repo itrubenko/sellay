@@ -9,6 +9,8 @@ const jwt = require('jsonwebtoken');
 const url = require('url');
 const User = require('../db/User');
 const axios = require('axios');
+const dotenv = require('dotenv');
+dotenv.config();
 let oauth2Client;
 
 /* GET home page. */

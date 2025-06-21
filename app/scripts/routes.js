@@ -1,4 +1,4 @@
-const indexRouter = require('../routes/Index');
+const indexRouter = require('../routes/index');
 const usersRouter = require('../routes/Login');
 const accountRouter = require('../routes/Account');
 
