@@ -29,6 +29,6 @@ jobs:
       - name: Pull docker container
         run: sudo docker pull sellay2025/sellay:latest
       - name: Delete old docker container
-        run: docker compose down --rmi all --remove-orphans -v
+        run: sudo docker compose down --rmi all --remove-orphans -v || true
       - name: Run Docker container
         run: sudo docker compose -f docker-compose.prod.yml up -d
