@@ -26,7 +26,8 @@ jobs:
     needs: build
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Pull docker container
         run: sudo docker pull sellay2025/sellay:latest
       - name: Delete old docker container
