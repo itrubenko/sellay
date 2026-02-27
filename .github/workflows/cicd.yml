@@ -2,9 +2,9 @@ name: CI/CD Workflow
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" , "features/cicd" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main" , "features/cicd"]
 
 
 jobs:
@@ -27,8 +27,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Pull docker container
-        run: sudo docker pull sellay2025/app:latest
+        run: sudo docker pull sellay2025/sellay:latest
       - name: Delete old docker container
-        run: sudo docker rm -f app-container || true
+        run: docker compose down --rmi all --remove-orphans -v
       - name: Run Docker container
-        run: sudo docker run -d -p 3333:3333 --name app-container sellay2025/app:latest
+        run: sudo docker compose -f docker-compose.prod.yml up -d
