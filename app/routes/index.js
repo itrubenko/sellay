@@ -15,7 +15,12 @@ let oauth2Client;
 
 /* GET home page. */
 route.get('/', function (req, res) {
-    res.render('index', { title: 'Express 1' });
+    // res.render('index', { title: 'Express 1' });
+    const payload = {
+        registerFormActionURL: '/account/register',
+        loginFormActionURL: '/account/login'
+    }
+    res.render('profile', payload);
 });
 
 /* GET home page. */
@@ -90,7 +95,7 @@ route.post('/auth/facebook/login', async (req, res) => {
         let foundUser = await User.findOne({ email });
         if (!foundUser) {
             let [lastName, firstName] = body.name.split(' ');
-            let user = new User({ email, confirmemail: email, confirmpassword: 'password', password: 'password', lastName, firstName });
+            let user = new User({ email, confirmpassword: 'password', password: 'password', lastName, firstName });
             let saveResult = await user.save();
             if (saveResult._id) {
                 createJWTToken(res, saveResult._id);
@@ -115,11 +120,13 @@ route.get('/auth/github', async (req, res) => {
     if (!requestToken) {
         return res.status(400).send("Code not found.");
     }
+
+    console.log(process.env.GITHUB_CLIENT_ID);
     try {
         // Step 3: Exchange code for access token
         const tokenResponse = await axios.post(
             'https://github.com/login/oauth/access_token', {
-            client_id: process.env.GITHUB_CLIENT_ID,
+            client_id: process.env.GITHUB_CLIENT_ID ,
             client_secret: process.env.GITHUB_CLIENT_SECRET,
             code: requestToken,
             redirect_uri: process.env.GITHUB_CALLBACK_URL
@@ -148,7 +155,7 @@ route.get('/auth/github', async (req, res) => {
             let foundUser = await User.findOne({ email });
             if (!foundUser) {
                 let [lastName = 'Test Lastname', firstName = 'Test firstName'] = user.name.split(' ');
-                let createUser = new User({ email, confirmemail: email, confirmpassword: 'password', password: 'password', lastName, firstName });
+                let createUser = new User({ email, password: 'password', lastName, firstName });
                 let saveResult = await createUser.save();
                 if (saveResult._id) {
                     createJWTToken(res, saveResult._id);
@@ -184,12 +191,17 @@ route.get('/auth/google', async (req, res) => {
             let email = data.email;
             let foundUser = await User.findOne({ email });
             if (!foundUser) {
-                let [lastName, firstName] = data.name.split(' ');
-                let user = new User({ email, confirmemail: email, confirmpassword: 'password', password: 'password', lastName, firstName });
-                let saveResult = await user.save();
-                if (saveResult._id) {
-                    createJWTToken(res, saveResult._id);
-                    return res.redirect('/account');
+                try {
+                    let [lastName = 'Noname', firstName = 'Noname'] = data.name.split(' ');
+                    let user = new User({ email, confirmpassword: 'password', password: 'password', lastName, firstName });
+                    let saveResult = await user.save();
+                    if (saveResult._id) {
+                        createJWTToken(res, saveResult._id);
+                        return res.redirect('/account');
+                    }
+                } catch (err) {
+                    console.error('Error creating user:', err);
+                    return res.status(500).send('Error creating user.');
                 }
             }
             createJWTToken(res, foundUser._id);

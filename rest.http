@@ -5,10 +5,10 @@ content-type: application/json
 {
     "firstName": "sds",
     "lastName": "d3434",
-    "email": "me@ukr.net",
-    "confirmemail": "me@ukr.net",
-    "password": "pass",
-    "confirmpassword": "pass1",
+    "email": "",
+    "confirmemail": "",
+    "password": "",
+    "confirmpassword": "",
     "phone": 433
 }
 

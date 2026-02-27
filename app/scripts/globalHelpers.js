@@ -35,6 +35,11 @@ const setupMorganLogging = (app, dir) => {
 
 const connectMongoDB = async () => {
     let dbURL = 'mongodb://root:example@localhost:27017/sellay?authSource=admin';
+    console.log('process.env.NODE_ENV = ', process.env.NODE_ENV);
+    if (process.env.NODE_ENV === 'DEV') {
+        dbURL = 'mongodb://root:example@mongo:27017/sellay?authSource=admin';
+    }
+
     if (process.env.NODE_ENV === 'PROD') {
         dbURL = `mongodb+srv://${process.env.MONGO_DB_USERNAME}:${process.env.MONGO_DB_PASSWORD}.rr8qapr.mongodb.net/sellay?retryWrites=true&w=majority&appName=Cluster0`;
     }
