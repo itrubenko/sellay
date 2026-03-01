@@ -32,5 +32,7 @@ jobs:
         run: sudo docker pull sellay2025/sellay:latest
       - name: Delete old docker container
         run: sudo docker compose -f docker-compose.prod.yml down --rmi all --remove-orphans -v || true
+      - name: Write secret to file
+        run: echo "${{ secrets.ALL }}" > .env
       - name: Run Docker container
         run: sudo docker compose -f docker-compose.prod.yml up -d
