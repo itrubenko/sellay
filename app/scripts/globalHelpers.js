@@ -23,6 +23,9 @@ const setupMorganLogging = (app, dir) => {
         return 'Response: ' + data;
     });
 
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
     // create a write stream (in append mode)
     const accessLogStream = fs.createWriteStream(path.join(dir, 'access.log'), { flags: 'a' });
     app.use(
