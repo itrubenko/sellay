@@ -39,7 +39,7 @@ const setupMorganLogging = (app, dir) => {
 const connectMongoDB = async () => {
     let dbURL = 'mongodb://root:example@localhost:27017/sellay?authSource=admin';
     console.log('process.env.NODE_ENV = ', process.env.NODE_ENV);
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' || true) {
         dbURL = 'mongodb://root:example@mongo:27017/sellay?authSource=admin';
     }
 
