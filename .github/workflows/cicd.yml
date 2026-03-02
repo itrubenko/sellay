@@ -16,6 +16,7 @@ jobs:
       env:
         DOCKER_LOGIN: ${{ secrets.DOCKER_LOGIN }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        NODE_ENV: development
       run: docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag sellay2025/sellay:latest
@@ -35,4 +36,4 @@ jobs:
       - name: Write secret to file
         run: echo "${{ secrets.ALL }}" > .env
       - name: Run Docker container
-        run: sudo docker compose -f docker-compose.prod.yml up -e NODE_ENV=DEV -d
+        run: sudo docker compose -f docker-compose.prod.yml up -e NODE_ENV=development -d
