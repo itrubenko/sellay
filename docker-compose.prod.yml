@@ -1,11 +1,11 @@
 services:
-  app:
+  web:
     image: sellay2025/sellay:latest
     restart: always
     ports:
       - 3000:3000
     # working_dir: /app
-    container_name: app
+    container_name: web
     env_file:
       - .env
     depends_on:
